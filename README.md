@@ -1,5 +1,7 @@
 # Flash Jetson AGX Orin from WSL2
 
+![Jetson AGX Orin flashing from a Windows host](docs/img/hero.png)
+
 Battle-tested scripts and a runbook for flashing the **NVIDIA Jetson AGX Orin
 64GB Developer Kit** with **JetPack 6.2 (L4T R36.4.3)** from a Windows 11 host
 running **WSL2 Ubuntu 22.04** — no native Linux required, no SDK Manager.
