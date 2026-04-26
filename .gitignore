@@ -1,0 +1,21 @@
+# BSP and downloaded artifacts (don't commit gigabytes)
+Linux_for_Tegra/
+*.tbz2
+*.tbz2.*
+*.tar.gz
+*.deb
+
+# Flash logs (per-run, large)
+flash-*.log
+flash_*.log
+*.log
+
+# Kernel build output
+wsl-kernel/
+bzImage*
+
+# Local OS junk
+.DS_Store
+Thumbs.db
+*.swp
+*~
