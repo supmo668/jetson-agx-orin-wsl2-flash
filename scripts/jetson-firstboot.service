@@ -1,0 +1,18 @@
+[Unit]
+Description=Jetson first-boot fixes (snap caps, mounts, etc.)
+After=network-online.target snapd.service local-fs.target
+Wants=network-online.target
+ConditionPathExists=!/var/lib/jetson-firstboot.done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/jetson-firstboot.sh
+RemainAfterExit=no
+StandardOutput=journal+console
+StandardError=journal+console
+
+# Don't fail the boot if this script errors — it's self-heal, not critical.
+SuccessExitStatus=0 1
+
+[Install]
+WantedBy=multi-user.target

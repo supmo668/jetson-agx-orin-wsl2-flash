@@ -15,6 +15,11 @@ that ran end-to-end on real hardware; nothing is theoretical.
 NVIDIA's official path is "use a native Ubuntu host, or use SDK Manager". WSL2
 isn't supported. But it works — once you fix:
 
+0. **L4T flash strips file-capability xattrs** → on first boot, `snap-confine`
+   has no `cap_dac_override`, so every snap install fails at launch with a
+   misleading SELinux warning. Solution: extract rootfs with `tar --xattrs`,
+   chroot-reinstall snapd before flashing, and ship a first-boot self-heal
+   service. See `docs/POST_FLASH_TIPS.md`.
 1. **Stock WSL2 kernel lacks `CONFIG_USB_NET_RNDIS_HOST`** → Phase B (rootfs
    copy over `usb0`) fails silently. Solution: build a custom kernel with the
    module enabled.
@@ -39,16 +44,21 @@ isn't supported. But it works — once you fix:
 
 ```
 scripts/
-  prepare_rootfs.sh           # Extract sample rootfs, apply_binaries, create user
+  prepare_rootfs.sh           # Extract sample rootfs (xattrs preserved), apply_binaries,
+                              #   create user, install firstboot self-heal, chroot snapd repair
   build_wsl_kernel_rndis.sh   # Build custom WSL2 kernel with RNDIS modules
   install_wsl_kernel.sh       # Install built kernel into Windows .wslconfig
   flash_orin_nvme.sh          # Run the NVMe flash with board-param overrides
   usbipd-orin-watch.ps1       # PowerShell watcher for APX → RNDIS busid transition
+  jetson-firstboot.sh         # Self-heal script run once on first boot of flashed Orin
+  jetson-firstboot.service    # systemd oneshot unit that triggers the above
 
 docs/
   FLASH_RUNBOOK.md            # Step-by-step manual procedure
   USBIPD_FLASH_GUIDE.md       # usbipd-win install + Force Recovery Mode reference
   TROUBLESHOOTING.md          # Each failure mode and how to recognize/fix it
+  POST_FLASH_TIPS.md          # Why snap breaks post-flash, the 3-layer fix design,
+                              #   GNOME Software / Firefox / Brave recipes
 ```
 
 ## Hardware tested
